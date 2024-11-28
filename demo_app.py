@@ -57,7 +57,7 @@ with st.sidebar:
     st.session_state.target_language_code = lang_name_to_code[target_language_name]
 
     # Set endpoint
-    endpoint = 'https://api-inference.huggingface.co/models/vasudevgupta/llm-tsd'
+    endpoint = 'https://rgoyhhcmfy2sv9od.us-east-1.aws.endpoints.huggingface.cloud'
 
     if st.button("Clear conversation"):
         st.session_state.messages = []
