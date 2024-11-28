@@ -3,10 +3,10 @@ available_models = {
     'tsd' : {
         'ell-tsd' : 'https://e10xa42ufttxnpto.us-east-1.aws.endpoints.huggingface.cloud/v1/',
         # 'tsd-ell' : None,
-        # 'eng-tsd' : 'https://rgoyhhcmfy2sv9od.us-east-1.aws.endpoints.huggingface.cloud/v1/',
+        'eng-tsd' : 'https://qwzj5ugslxbw5sp0.us-east-1.aws.endpoints.huggingface.cloud/v1/',
         # 'tsd-eng' : None,
-        # 'spa-tsd' : 'https://rgoyhhcmfy2sv9od.us-east-1.aws.endpoints.huggingface.cloud/v1/',
-        # 'tsd-spa' : 'https://rgoyhhcmfy2sv9od.us-east-1.aws.endpoints.huggingface.cloud/v1/',
+        'spa-tsd' : 'https://g3gtpfycldxi0pt0.us-east-1.aws.endpoints.huggingface.cloud/v1/',
+        # 'tsd-spa' : 'Quantization pending!',
     }
 }
 
