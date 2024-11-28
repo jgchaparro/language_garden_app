@@ -57,7 +57,7 @@ with st.sidebar:
     st.session_state.target_language_code = lang_name_to_code[target_language_name]
 
     # Set endpoint
-    endpoint = 'https://rgoyhhcmfy2sv9od.us-east-1.aws.endpoints.huggingface.cloud'
+    endpoint = 'https://rgoyhhcmfy2sv9od.us-east-1.aws.endpoints.huggingface.cloud/v1/'
 
     if st.button("Clear conversation"):
         st.session_state.messages = []
@@ -65,7 +65,7 @@ with st.sidebar:
 if "client" not in st.session_state:
     st.session_state.client = OpenAI(
         base_url = endpoint,
-        api_key = "Malaga"
+        api_key = "Malaga",
     )
 
 # Chat
