@@ -1,6 +1,6 @@
 import streamlit as st
-import requests
-import json
+from openai import OpenAI
+import os
 
 st.set_page_config(page_title="Language Garden", page_icon="🌲", layout="wide")
 
@@ -62,6 +62,12 @@ with st.sidebar:
     if st.button("Clear conversation"):
         st.session_state.messages = []
 
+if "client" not in st.session_state:
+    st.session_state.client = OpenAI(
+        base_url = endpoint,
+        api_key = "Malaga"
+    )
+
 # Chat
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -76,8 +82,20 @@ if to_translate := st.chat_input(f"Input a sentence to translate from {st.sessio
         st.markdown(to_translate)
 
     with st.chat_message("assistant"):
-        with st.spinner("Translating..."):
-            response = requests.get(endpoint, params={'text': to_translate})
-            translation = json.loads(response.text)['translation']
+        chat_completion = st.session_state.client.chat.completions.create(
+            model="tgi",
+            messages=[
+            {
+                "role": "user",
+                "content": f"Translate the following sentence from Greek to Tsakonian: {to_translate}"
+            }
+        ],
+            temperature = 0,
+            max_tokens = 150,
+            # stream = False,
+            seed = None,
+        )
+
+        translation = chat_completion.choices[0].message.content.replace('Translation to Tsakonian: ', '')
         st.write_stream(stream_text(translation))
-        st.session_state.messages.append({"role": "assistant", "content": translation})
+    st.session_state.messages.append({"role": "assistant", "content": translation})
