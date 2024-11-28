@@ -68,6 +68,7 @@ if "client" not in st.session_state:
         api_key = "Malaga",
     )
 
+
 # Chat
 if "messages" not in st.session_state:
     st.session_state.messages = []
