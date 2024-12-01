@@ -1,5 +1,5 @@
 import streamlit as st
-from openai import OpenAI
+from openai import OpenAI, BadRequestError
 from utils import available_models, lang_name_to_code, lang_code_to_name
 
 st.set_page_config(page_title="Language Garden", page_icon="🌲", layout="wide")
@@ -9,6 +9,7 @@ def stream_text(text):
     for char in text:
         yield char
 
+# Save previous parameters
 with st.sidebar:
     st.title("Language garden", anchor = "right")
     # st.image("assets/image.png", use_column_width=True) 
@@ -43,11 +44,10 @@ with st.sidebar:
     if st.button("Clear conversation"):
         st.session_state.messages = []
 
-if "client" not in st.session_state:
-    st.session_state.client = OpenAI(
-        base_url = endpoint,
-        api_key = "Malaga",
-    )
+st.session_state.client = OpenAI(
+    base_url = endpoint,
+    api_key = "Malaga",
+)
 
 # Chat
 if "messages" not in st.session_state:
@@ -57,26 +57,30 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-if to_translate := st.chat_input(f"Input a sentence to translate from {st.session_state.origin_language_name} to {st.session_state.target_language_name}"):
+if to_translate := st.chat_input("Input a sentence to translate..."):
     st.session_state.messages.append({"role": "user", "content": to_translate})
     with st.chat_message("user"):
         st.markdown(to_translate)
 
     with st.chat_message("assistant"):
-        chat_completion = st.session_state.client.chat.completions.create(
-            model="tgi",
-            messages=[
-            {
-                "role": "user",
-                "content": f"Translate the following sentence from Greek to Tsakonian: {to_translate}"
-            }
-        ],
-            temperature = 0,
-            max_tokens = 150,
-            # stream = False,
-            seed = None,
-        )
+        try:
+            chat_completion = st.session_state.client.chat.completions.create(
+                model="tgi",
+                messages=[
+                {
+                    "role": "user",
+                    "content": f"Translate the following sentence from Greek to Tsakonian: {to_translate}"
+                }
+            ],
+                temperature = 0,
+                max_tokens = 150,
+                # stream = False,
+                seed = None,
+            )
 
-        translation = chat_completion.choices[0].message.content.replace('Translation to Tsakonian: ', '')
+            translation = chat_completion.choices[0].message.content.replace('Translation to Tsakonian: ', '')
+        except BadRequestError:
+            translation = "The request was not processed, probably due to the server not being active. Please, try again later."
+        
         st.write_stream(stream_text(translation))
-    st.session_state.messages.append({"role": "assistant", "content": translation})
+        st.session_state.messages.append({"role": "assistant", "content": translation})
