@@ -38,6 +38,12 @@ with st.sidebar:
     st.session_state.origin_language_code = lang_name_to_code[origin_language_name]
     st.session_state.target_language_code = lang_name_to_code[target_language_name]
 
+    # Determine alternative language code
+    if origin_language_name == main_language_name:
+        st.session_state.alternative_language_code = st.session_state.target_language_code
+    else:
+        st.session_state.alternative_language_code = st.session_state.origin_language_code
+
     # Set endpoint
     endpoint = available_models[st.session_state.main_language_code][f"{st.session_state.origin_language_code}-{st.session_state.target_language_code}"]
 
@@ -45,8 +51,8 @@ with st.sidebar:
         st.session_state.messages = []
 
 st.session_state.client = OpenAI(
-    base_url = endpoint,
-    api_key = "Malaga",
+	base_url = "https://nc4x3b3ajy7crhlq.us-east-1.aws.endpoints.huggingface.cloud/v1/",
+	api_key = "Malaga" # os.environ['HF_TOKEN']
 )
 
 # Chat
@@ -64,21 +70,30 @@ if to_translate := st.chat_input("Input a sentence to translate..."):
 
     with st.chat_message("assistant"):
         try:
-            chat_completion = st.session_state.client.chat.completions.create(
-                model="tgi",
-                messages=[
-                {
-                    "role": "user",
-                    "content": f"Translate the following sentence from Greek to Tsakonian: {to_translate}"
-                }
-            ],
-                temperature = 0,
-                max_tokens = 150,
-                # stream = False,
-                seed = None,
+            prompt = f"""
+### Instruction:
+Translate the following text from {origin_language_name} to {target_language_name}.
+
+### Input:
+{to_translate}
+
+### Response:
+""".strip()
+
+            chat_completion = st.session_state.client.completions.create(
+                model= f"jgchaparro/language_garden-{st.session_state.main_language_code}-{st.session_state.alternative_language_code}-9B-bl-GGUF",
+                prompt = prompt,
+                max_tokens= None,
+                temperature=0,
+                top_p=None,
+                stream= False,
+                seed=33,
+                stop=None,
+                frequency_penalty=None,
+                presence_penalty=None,
             )
 
-            translation = chat_completion.choices[0].message.content.replace('Translation to Tsakonian: ', '')
+            translation = chat_completion.choices[0].text.strip()
         except BadRequestError:
             translation = "The request was not processed, probably due to the server not being active. Please, try again later."
         

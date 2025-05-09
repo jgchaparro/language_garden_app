@@ -2,11 +2,7 @@
 available_models = {
     'tsd' : {
         'ell-tsd' : 'https://e10xa42ufttxnpto.us-east-1.aws.endpoints.huggingface.cloud/v1/',
-        # 'tsd-ell' : None,
-        'eng-tsd' : 'https://qwzj5ugslxbw5sp0.us-east-1.aws.endpoints.huggingface.cloud/v1/',
-        # 'tsd-eng' : None,
-        'spa-tsd' : 'https://g3gtpfycldxi0pt0.us-east-1.aws.endpoints.huggingface.cloud/v1/',
-        # 'tsd-spa' : 'Quantization pending!',
+        'tsd-ell' : "https://nc4x3b3ajy7crhlq.us-east-1.aws.endpoints.huggingface.cloud/v1/"
     }
 }
 
